@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Server</title>
+
+    <style>
+        h2 {
+            margin-bottom: 2em;
+        }
+        .container {
+            width: 90%;
+            margin: auto;
+            margin-top: 2em;
+        }
+        .cell {
+            padding: 0.5em;
+            width: 18%;
+            height: 3.5em;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn  {
+            width: 90%;
+            height: 90%;
+            background-color: #ff2123;
+        }
+        .btn2 {
+            width: 90%;
+            height: 3em;
+        }
+        .active {
+            background-color: #5fff68;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 style="text-align: center;">Pi Controls for 16 Channel Relay</h2>
+        <div class="cell">
+            <button class="btn" id="b1" type="button" onclick="button(1)">1</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b2" type="button" onclick="button(2)">2</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b3" type="button" onclick="button(3)">3</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b4" type="button" onclick="button(4)">4</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b5" type="button" onclick="button(5)">5</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b6" type="button" onclick="button(6)">6</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b7" type="button" onclick="button(7)">7</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b8" type="button" onclick="button(8)">8</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b9" type="button" onclick="button(9)">9</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b10" type="button" onclick="button(10)">10</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b11" type="button" onclick="button(11)">11</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b12" type="button" onclick="button(12)">12</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b13" type="button" onclick="button(13)">13</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b14" type="button" onclick="button(14)">14</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b15" type="button" onclick="button(15)">15</button>
+        </div>
+        <div class="cell">
+            <button class="btn" id="b16" type="button" onclick="button(16)">16</button>
+        </div>
+    </div>
+    <div class="container">
+        <button class="btn2" onclick="button_all(1)">ALL ON</button>
+        <button class="btn2" onclick="button_all(0)">All OFF</button>
+        <button class="btn2" onclick="preset(1)">Preset 1</button>
+        <button class="btn2" onclick="preset(2)">Preset 2</button>
+    </div>
+    <script type="application/javascript">
+        var button_state = [];
+        for (var i=0;i<16;i+=1) {
+            button_state.push(false);
+        }
+
+        function button(n) {
+            console.log("received message: " +n+" ");
+            button_state[n] = (!button_state[n]);
+            console.log(button_state[n]);
+            if (button_state[n]) {
+                document.getElementById('b'+n).classList.add('active');
+            } else {
+                document.getElementById('b'+n).classList.remove('active');
+            }
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/controller/"+n, true);
+            xhttp.send();
+        }
+
+        function button_all(n) {
+            for (var i=1;i<17;i+=1) {
+                if (n) {
+                    document.getElementById('b'+i).classList.add('active');
+                    button_state[i] = true;
+                } else {
+                    document.getElementById('b'+i).classList.remove('active');
+                    button_state[i] = false;
+                }
+            }
+            var xhttp = new XMLHttpRequest();
+            if (n) {
+                xhttp.open("GET", "/controller/all_on", true);
+            } else {
+                xhttp.open("GET", "/controller/all_off", true);
+            }
+            xhttp.send();
+        };
+        function preset (n) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/controller/preset_"+n, true);
+            xhttp.send();
+        }
+    </script>
+</body>
+</html>
